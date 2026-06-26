@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Near-Misses — The Stones Remember</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0f0507;
+    color: #F5ECD7;
+    font-family: 'EB Garamond', Georgia, serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .page-wrapper {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 2rem 4rem;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid rgba(201,168,76,0.3);
+    margin-bottom: 2rem;
+  }
+  .header-eyebrow {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.25em;
+    color: #C9A84C;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    font-weight: 400;
+    font-style: italic;
+    color: #F5ECD7;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+  .header-sub {
+    font-size: 1.05rem;
+    color: rgba(245,236,215,0.6);
+    font-style: italic;
+    max-width: 620px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+    margin: 1.5rem 0 2.5rem;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+  }
+  .dot-luisa { background: #8B2252; }
+  .dot-peggy { background: #1A3A6B; }
+  .dot-year  { background: #C9A84C; }
+  .label-luisa { color: #E8709A; }
+  .label-peggy { color: #6EB3E8; }
+
+  /* TIMELINE CONTAINER */
+  .timeline {
+    position: relative;
+    padding: 0 0 2rem;
+  }
+
+  /* CENTER SPINE */
+  .spine {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, rgba(201,168,76,0.4) 5%, rgba(201,168,76,0.4) 95%, transparent);
+    transform: translateX(-50%);
+  }
+
+  /* EACH EVENT ROW */
+  .event {
+    display: grid;
+    grid-template-columns: 1fr 80px 1fr;
+    gap: 0;
+    margin-bottom: 0;
+    position: relative;
+    cursor: pointer;
+  }
+  .event:hover .event-card { border-color: rgba(201,168,76,0.5); }
+
+  /* DATE BUBBLE */
+  .date-bubble {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+    padding: 1.5rem 0;
+  }
+  .date-circle {
+    width: 62px;
+    height: 62px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Playfair Display', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    transition: transform 0.25s ease;
+    position: relative;
+    z-index: 2;
+  }
+  .event:hover .date-circle { transform: scale(1.12); }
+  .date-primary { background: #C9A84C; color: #1A0A0A; }
+  .date-secondary { background: transparent; color: #C9A84C; border: 1.5px solid #C9A84C; }
+
+  /* EVENT CARDS */
+  .event-card {
+    padding: 1.4rem 1.6rem;
+    border: 1px solid rgba(255,255,255,0.06);
+    transition: all 0.25s ease;
+    position: relative;
+  }
+  .event-card-luisa {
+    background: rgba(61,14,34,0.55);
+    border-left: none;
+    border-radius: 8px 0 0 8px;
+    text-align: right;
+    margin: 0.6rem 0;
+  }
+  .event-card-peggy {
+    background: rgba(26,39,68,0.55);
+    border-right: none;
+    border-radius: 0 8px 8px 0;
+    text-align: left;
+    margin: 0.6rem 0;
+  }
+
+  .card-who {
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    font-family: 'EB Garamond', serif;
+    margin-bottom: 0.4rem;
+    font-weight: 500;
+  }
+  .card-who-luisa { color: #E8709A; }
+  .card-who-peggy { color: #6EB3E8; }
+
+  .card-location {
+    font-size: 0.78rem;
+    color: #C9A84C;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 0.6rem;
+  }
+  .card-text {
+    font-size: 1rem;
+    line-height: 1.65;
+    color: rgba(245,236,215,0.88);
+    font-style: italic;
+  }
+
+  /* EXPANDED DETAIL PANEL */
+  .detail-panel {
+    display: none;
+    grid-column: 1 / -1;
+    background: rgba(15,5,7,0.9);
+    border: 1px solid rgba(201,168,76,0.25);
+    border-radius: 8px;
+    padding: 2rem 2.5rem;
+    margin: 0 0 1rem;
+    position: relative;
+  }
+  .detail-panel.open { display: block; animation: slideDown 0.3s ease; }
+  .detail-panel-inner {
+    display: grid;
+    grid-template-columns: 1fr 1px 1fr;
+    gap: 2rem;
+  }
+  .detail-divider { background: rgba(201,168,76,0.2); }
+  .detail-col h3 {
+    font-family: 'EB Garamond', serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 0.8rem;
+  }
+  .detail-col h3.luisa-h { color: #E8709A; }
+  .detail-col h3.peggy-h { color: #6EB3E8; }
+  .detail-col p {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: rgba(245,236,215,0.85);
+    font-style: italic;
+  }
+  .detail-close {
+    position: absolute;
+    top: 1rem;
+    right: 1.2rem;
+    background: none;
+    border: none;
+    color: rgba(201,168,76,0.5);
+    font-size: 1.2rem;
+    cursor: pointer;
+    font-family: serif;
+    line-height: 1;
+    transition: color 0.2s;
+  }
+  .detail-close:hover { color: #C9A84C; }
+  .detail-miss {
+    margin-top: 1.2rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid rgba(201,168,76,0.15);
+    font-size: 0.95rem;
+    color: rgba(201,168,76,0.8);
+    font-style: italic;
+    text-align: center;
+    grid-column: 1 / -1;
+  }
+  .click-hint {
+    font-size: 0.72rem;
+    color: rgba(201,168,76,0.45);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+    text-align: center;
+    position: absolute;
+    bottom: -1.2rem;
+    width: 100%;
+    left: 0;
+  }
+
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* FOOTER QUOTE */
+  .footer-quote {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    border-top: 1px solid rgba(201,168,76,0.2);
+    margin-top: 2rem;
+  }
+  .footer-quote blockquote {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+    font-style: italic;
+    font-weight: 400;
+    color: rgba(245,236,215,0.8);
+    max-width: 700px;
+    margin: 0 auto 1rem;
+    line-height: 1.6;
+  }
+  .footer-quote cite {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #C9A84C;
+    font-style: normal;
+  }
+
+  .expand-hint {
+    text-align: center;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(201,168,76,0.4);
+    margin-bottom: 1.5rem;
+  }
+  .expand-hint span { animation: pulse 2s ease-in-out infinite; display: inline-block; }
+  @keyframes pulse { 0%,100%{opacity:.4} 50%{opacity:.9} }
+
+  @media (max-width: 700px) {
+    .spine { display: none; }
+    .event { grid-template-columns: 1fr; }
+    .date-bubble { padding: 0.5rem 0; }
+    .event-card-luisa, .event-card-peggy { text-align: left; border-radius: 8px; margin: 0.3rem 0; }
+    .detail-panel-inner { grid-template-columns: 1fr; }
+    .detail-divider { display: none; }
+  }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <header class="header">
+    <p class="header-eyebrow">◆ &nbsp; The Stones Remember &nbsp; ◆</p>
+    <h1>The Near-Misses</h1>
+    <p class="header-sub">Six moments across three decades when Luisa Casati and Peggy Guggenheim almost — but never — knew each other existed.</p>
+  </header>
+
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot dot-luisa"></div><span class="label-luisa">Luisa Casati</span></div>
+    <div class="legend-item"><div class="legend-dot dot-year"></div><span style="color:#C9A84C">Year</span></div>
+    <div class="legend-item"><div class="legend-dot dot-peggy"></div><span class="label-peggy">Peggy Guggenheim</span></div>
+  </div>
+
+  <p class="expand-hint"><span>◆</span>&nbsp; Click any row to read the full scene &nbsp;<span>◆</span></p>
+
+  <div class="timeline">
+    <div class="spine"></div>
+
+    <!-- EVENT 1: 1922 -->
+    <div class="event" onclick="toggle('e1')" role="button" tabindex="0" aria-expanded="false" id="ev1">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ Paris, Montparnasse</div>
+        <p class="card-text">Man Ray photographs her. The triple-exposure portrait produces three pairs of eyes — he has made a portrait of her soul, she tells him. She orders dozens of copies. The image goes around Paris.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-primary">1922</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Paris, Montparnasse ◆</div>
+        <p class="card-text">She is in Paris with her first husband Laurence Vail, finding her way into the city's bohemian circles. Man Ray is a new friend. She does not yet know what she will become.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e1">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e1')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">Luisa — 1922</h3>
+          <p>In 1922, Luisa was still the most extraordinary woman in Europe — the Marchesa who had turned the Palazzo Venier dei Leoni into a stage for her mythology. She came to Man Ray because she wanted an image that matched her ambition. What she got was stranger and more beautiful than anything she expected: a long exposure that left her moving too much, producing three pairs of eyes floating in dark space. She told Man Ray he had made a portrait of her soul. She ordered dozens of prints and sent them to everyone she knew.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">Peggy — 1920–1924</h3>
+          <p>Peggy had arrived in Paris in 1920. She was twenty-two, newly freed from her upbringing, and beginning the education of a lifetime. She found Man Ray through the expatriate circles of Montparnasse. In 1924, he photographed her in a Paul Poiret gown — one of his most famous portraits, which now hangs in the Rijksmuseum. That same year, she likely walked through the same studio where Luisa had stood two years before. Man Ray showed her the triple-exposure. Neither he nor she knew what it meant.</p>
+        </div>
+        <p class="detail-miss">The same photographer. The same studio. The same eyes watching from a silver print — and Peggy had no idea whose they were.</p>
+      </div>
+    </div>
+
+    <!-- EVENT 2: 1924 -->
+    <div class="event" onclick="toggle('e2')" role="button" tabindex="0" aria-expanded="false" id="ev2">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ Man Ray's Studio, Paris</div>
+        <p class="card-text">She descends his staircase carrying a rolled parcel of prints from the triple-exposure session — still the most talked-about image in Paris. She brushes past a young American woman in the narrow stairwell without looking up.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-secondary">1924</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Man Ray's Studio, Paris ◆</div>
+        <p class="card-text">She arrives for her portrait session minutes after the tall woman in furs leaves. Man Ray tells her the Marchesa Casati had just been in. He shows her the triple-exposure image. She stares at it. "What does she look like?" she asks. "Like nothing you've ever seen," he says.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e2">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e2')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">Going down</h3>
+          <p>Luisa had come to collect more copies of her portrait — the image that had made Man Ray famous. She was still at her height in 1924: the Palazzo Venier dei Leoni still hers, her legend still intact. She carried the prints tucked under her arm as she descended the stairs. Someone was coming up. She did not look at them.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">Going up</h3>
+          <p>Peggy flattened herself against the wall of the narrow stairwell to let the tall woman pass. She smelled something heavy and floral. She looked up. The woman did not look back. Man Ray mentioned her name upstairs — "the Marchesa Casati, you may have passed her on the stairs" — but it meant nothing to Peggy yet. It would not mean anything for nearly thirty years. Not until she stood in the Palazzo Venier dei Leoni and learned whose house it had been first.</p>
+        </div>
+        <p class="detail-miss">They passed within inches of each other. Neither spoke. Neither turned back.</p>
+      </div>
+    </div>
+
+    <!-- EVENT 3: 1938 -->
+    <div class="event" onclick="toggle('e3')" role="button" tabindex="0" aria-expanded="false" id="ev3">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ Cork Street, Mayfair, London</div>
+        <p class="card-text">Living in poverty near Harrods since her bankruptcy in 1930, she walks to Cork Street on the night of January 24th and enters a new gallery opening. She stands before the Cocteau drawings and remembers when Cocteau came to her. She vanishes before anyone learns her name.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-primary">1938</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Cork Street, Mayfair, London ◆</div>
+        <p class="card-text">She opens Guggenheim Jeune on January 24th — London's first avant-garde gallery, in a former pawnbroker's shop. The opening night draws London's café society. She notices a remarkable woman in black near the end of the evening. She crosses the room. But someone interrupts her, and the woman is gone.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e3">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e3')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">The woman who remembered</h3>
+          <p>By 1938, Luisa Casati had been living in London for eight years — reduced to a one-room flat near Harrods, surviving on gin, scavenging feathers from the Chelsea Palace Music Hall to decorate her hair. She had not lost the bearing of a woman who had once commanded the entirety of European bohemian society. She walked to Cork Street because she had heard about the gallery and could not stop herself. The Cocteau drawings moved her. She had known Cocteau in Paris. She had known all of them. She left before anyone could ask who she was.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">The woman who was just beginning</h3>
+          <p>Peggy was forty years old and opening her first gallery. She described herself as knowing "frightfully little about modern art" when she began, relying on Marcel Duchamp and Samuel Beckett for guidance. The Guggenheim Jeune would run for eighteen months, hosting over twenty exhibitions and remaking London's art scene. On this opening night, she saw a woman who stopped her — something about the stillness, the eyes, the absolute confidence of someone with nowhere they needed to be. Roland Penrose pulled her away before she could reach her. When she turned back, the woman was gone.</p>
+        </div>
+        <p class="detail-miss">Two miles separated their homes. They shared the same city for eight years. This was the closest they ever came.</p>
+      </div>
+    </div>
+
+    <!-- EVENT 4: 1939 -->
+    <div class="event" onclick="toggle('e4')" role="button" tabindex="0" aria-expanded="false" id="ev4">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ Paris — a last visit</div>
+        <p class="card-text">She makes a quiet final visit to Paris in the last summer before the war. She dines at the Ritz — reduced, invisible, a ruin of her former mythology. A woman in black at a corner table who once owned this city.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-secondary">1939</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Paris — August ◆</div>
+        <p class="card-text">She races through Paris in August 1939, buying one painting a day before war makes everything impossible. Herbert Read's list in her luggage. She also dines at the Ritz. The war begins in September. She is at the same table; she does not notice the woman in black across the room.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e4">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e4')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">The last season</h3>
+          <p>Luisa's world had ended in 1930. Paris was the city she had made her own — the Ritz, the Palais Rose, the costume balls, the salons where she arrived in peacock feathers and left at dawn. She came back in 1939 to say goodbye to something she couldn't name. The city she returned to barely remembered her. She sat in the gilded dining room of the Ritz and watched the world performing its last acts before the flood.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">One painting a day</h3>
+          <p>Peggy later wrote of this period with a kind of mania: she had Herbert Read's list and she intended to work through it systematically before the Germans arrived. She bought ten Picassos, forty Ernsts, eight Mirós. She dined at the Ritz because her friends dined there. On one such evening in late August 1939, a few days before Hitler invaded Poland, she was in the same room as a tall woman in black who was also making her last visit to Paris. Peggy did not notice her. She was talking about a Léger she had just acquired.</p>
+        </div>
+        <p class="detail-miss">The last summer of the old world. Both women were in the same gilded room watching it end — from entirely different directions.</p>
+      </div>
+    </div>
+
+    <!-- EVENT 5: 1948 -->
+    <div class="event" onclick="toggle('e5')" role="button" tabindex="0" aria-expanded="false" id="ev5">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ 32 Beaufort Gardens, Knightsbridge</div>
+        <p class="card-text">Her final address. Ten minutes from Harrods on foot. She has lived here for years — conducting séances, scavenging feathers, caring for her Pekinese. She is sixty-seven. She still commands every room she walks through, even empty ones. She steps out of her building on a spring afternoon.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-primary">1948</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Brompton Road, London ◆</div>
+        <p class="card-text">She is in London before leaving for Venice. She walks along Brompton Road. She sees a tall woman in black leave a building on Beaufort Gardens — something about her arrests the eye. She almost stops. She has a taxi to catch. She walks on. Six weeks later, she buys the Palazzo Venier dei Leoni.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e5">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e5')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">32 Beaufort Gardens</h3>
+          <p>Luisa Casati died here nine years later, in 1957. She was found by a friend who had come for a séance, and who took her embalmed Pekinese dog for safekeeping before calling anyone. She was buried in Brompton Cemetery — just up the road — wearing a leopard-trimmed cape and a fresh pair of false eyelashes. Her gravestone reads: "Age cannot wither her, nor custom stale her infinite variety." She was interred with the stuffed dog. In 1948 she had been there nearly two decades, still holding herself like a Marchesa, still dressing in black, still carrying the mythology she had invented for herself like a flag.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">The last near-miss</h3>
+          <p>Peggy was wrapping up her affairs before departing for Venice, where she had been invited to show her collection at the Biennale and where she would soon purchase the Palazzo Venier dei Leoni from the heirs of Viscountess Castlerosse. She was walking through Knightsbridge — she shopped at Harrods — when she noticed the woman. The particular quality of the movement. The black coat. The absolute self-possession. She thought she recognized something she could not name. She had a taxi. She had a dinner. She walked on. Within the year, she would be standing in a palazzo in Venice, learning for the first time that a Marchesa had lived there before her — that a woman who called herself "a living work of art" had made the same rooms into her stage.</p>
+        </div>
+        <p class="detail-miss">If Peggy had stopped. If she had simply stopped and turned around on Brompton Road — she would have met her. The woman whose home she was about to inherit.</p>
+      </div>
+    </div>
+
+    <!-- EVENT 6: 1948 Venice Biennale -->
+    <div class="event" onclick="toggle('e6')" role="button" tabindex="0" aria-expanded="false" id="ev6">
+      <div class="event-card event-card-luisa">
+        <div class="card-who card-who-luisa">Luisa</div>
+        <div class="card-location">◆ Venice Biennale — the Greek Pavilion</div>
+        <p class="card-text">Historical fiction: she comes back to Venice one last time. She moves through the Greek Pavilion slowly, looking at the paintings that fill the rooms she never imagined could be filled this way. She sees a woman in the corner talking to journalists. She looks at her for a moment. She looks away.</p>
+      </div>
+      <div class="date-bubble">
+        <div class="date-circle date-secondary">1948</div>
+      </div>
+      <div class="event-card event-card-peggy">
+        <div class="card-who card-who-peggy">Peggy</div>
+        <div class="card-location">Venice Biennale — the Greek Pavilion ◆</div>
+        <p class="card-text">The first time in Biennale history a private collection is given pavilion space. She is animated, gesturing, in her element at last. She does not notice the tall woman in black who moves through her collection slowly and then disappears into the Venetian afternoon. That autumn, she buys the palazzo. She is told a Marchesa once lived there. The stones remember both of them.</p>
+      </div>
+    </div>
+    <div class="detail-panel" id="e6">
+      <button class="detail-close" onclick="event.stopPropagation(); toggle('e6')">✕</button>
+      <div class="detail-panel-inner">
+        <div class="detail-col">
+          <h3 class="luisa-h">A final return — historical fiction</h3>
+          <p>This last scene is the most overtly invented, but it rests on the possible: Luisa was still alive in 1948. She had loved Venice more than any other city. The Palazzo Venier dei Leoni had been her most important home. It is not impossible — it is, in fact, achingly plausible — that she came back one last time, drawn by the same pull that drew her there in 1910. In this version, she finds the city has moved on without her. There is a new American woman in the palazzo she once owned. The paintings are different. The animals are gone. But the stones are the same. And so, from across a room in the Giardini, she looks at the woman who has inherited her life, and turns away before anyone can tell her who she is looking at.</p>
+        </div>
+        <div class="detail-divider"></div>
+        <div class="detail-col">
+          <h3 class="peggy-h">The beginning of everything</h3>
+          <p>The 1948 Biennale was Peggy Guggenheim's coronation. The Secretary General invited her collection to take the Greek Pavilion — and for the first time, audiences in Europe encountered the full range of what she had built over the previous decade. Jackson Pollock. Mark Rothko. Max Ernst. Kandinsky. She stood in that pavilion and felt, perhaps for the first time, that she had become what she was meant to be. She did not notice the tall woman in black who moved through the rooms and out into the afternoon. She was too busy becoming the future. And the woman leaving was the past — walking out of the last room she would ever see the palazzo fill.</p>
+        </div>
+        <p class="detail-miss">The palazzo's first great inhabitant looked at its last without knowing it. And then she was gone — and Peggy was left to carry the stones forward alone.</p>
+      </div>
+    </div>
+
+  </div><!-- /timeline -->
+
+  <footer class="footer-quote">
+    <blockquote>"They shared the same photographer, the same city, the same palazzo, and the same impossible century — and never once knew each other's names."</blockquote>
+    <cite>— The Stones Remember &nbsp;·&nbsp; Madelena Kishner &amp; Riccardo Di Capua</cite>
+  </footer>
+
+</div><!-- /page-wrapper -->
+
+<script>
+function toggle(id) {
+  const panel = document.getElementById(id);
+  const isOpen = panel.classList.contains('open');
+  document.querySelectorAll('.detail-panel').forEach(p => p.classList.remove('open'));
+  if (!isOpen) panel.classList.add('open');
+}
+document.querySelectorAll('.event').forEach(el => {
+  el.addEventListener('keydown', e => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+  });
+});
+</script>
+</body>
+</html>
